@@ -165,9 +165,17 @@ export default function Index() {
             }
         } else {
             setIsVideosFinished(true);
+
+            for (let i = 1; i <= 10; i++) {
+                setTimeout(() => {
+                    audioElement.current.volume = 0.1 + (i * 0.09);
+                }, 100 * i);
+            }
+
             setTimeout(() => {
                 setIsEndingFadeFinished(true);
             }, 1000);
+
             console.log("Videos Finished!");
         }
     }
@@ -249,6 +257,8 @@ export default function Index() {
                                 return <h3><span style={{fontWeight: "bold"}}>{video.name}</span> - <a href={video.redeemLink} target="_blank">{video.gift || "No Gift"}</a></h3>
                             }
                         })}
+                        <hr style={{margin: "4rem", height: "3px", width: "100%", color: "black", backgroundColor: "black"}}></hr>
+                        <h1>Thanks for watching! 😄</h1>
                     </div>
                 </div>
             }
