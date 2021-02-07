@@ -8,7 +8,8 @@ export default function Index() {
     const mainDiv = useRef(null);
     const audioElement = useRef(null)
     const videoElement = useRef(null);
-    let [welcomeScreen, setWelcomeScreen] = useState(true);
+    let [isAnimationStarted, setIsAnimationStarted] = useState(false);
+    let [isSongFinished, setIsSongFinished] = useState(false);
     let [pastLyrics, setPastLyrics] = useState("");
     let [futureLyrics, setFutureLyrics] = useState("");
 
@@ -17,6 +18,22 @@ export default function Index() {
         age: 22,
         month: "February",
         day: 6
+    }
+
+    const getAgeWithSuffix = () => {
+        let i = settings.age;
+        let j = i % 10,
+            k = i % 100;
+        if (j == 1 && k != 11) {
+            return i + "st";
+        }
+        if (j == 2 && k != 12) {
+            return i + "nd";
+        }
+        if (j == 3 && k != 13) {
+            return i + "rd";
+        }
+        return i + "th";
     }
 
     const liveLyrics = [
@@ -46,16 +63,16 @@ export default function Index() {
         [22318, "🎵 Happy Birthday", " to You! 🎵"],
         [23351, "🎵 Happy Birthday to", " You! 🎵"],
         [24023, "🎵 Happy Birthday to You!", " 🎵"],
+        [26610, `🎉 Andrew, it's your ${getAgeWithSuffix()} birthday! 🎉`, ""],
     ];
 
     const finishedLoadingVideo = (e) => {
         console.log("Finished loading video!");
     }
 
-    const startVideo = () => {
-        setWelcomeScreen(false);
+    const startAnimation = () => {
+        setIsAnimationStarted(true);
         mainDiv.current.requestFullscreen();
-        // audioElement.current.currentTime = 40;
         audioElement.current.play();
 
         setTimeout(() => {
@@ -70,6 +87,10 @@ export default function Index() {
                 setFutureLyrics(lyric[2]);
             }, lyric[0]);
         });
+
+        setTimeout(() => {
+            setIsSongFinished(true);
+        }, 26610);
 
         // videoElement.current.play();
         console.log("Playing Video!");
@@ -94,11 +115,30 @@ export default function Index() {
             <audio ref={audioElement} onEnded={onAudioEnd} src="birthday.m4a"></audio>
             <video ref={videoElement} className={styles.video} onCanPlayThrough={finishedLoadingVideo} src="video.mp4" style={{opacity: getVideoOpacity()}}></video>
             
-            {welcomeScreen ?
+            {isAnimationStarted ?
+                <>
+                    <div className={styles.main}>
+                        <div className={styles.header}>
+                            <h1>{pastLyrics}<span className={styles.dim}>{futureLyrics}</span></h1>
+                        </div>
+                        <Calendar month={settings.month} day={settings.day}></Calendar>
+                        {isSongFinished &&
+                            <div className={styles.header}>
+                                <p>Today's your special day!</p>
+                                <p>Since your friends aren't able to meet you in person, they have worked together to present this animation to you as a surprise!</p>
+                                <p>Let's see what messages and presents your friends left for you!</p>
+                            </div>
+                        }
+                    </div>
+
+                    <div className={styles.bottom}>
+                        <Cake age={settings.age}></Cake>
+                    </div>
+                </>
+            :
                 <div className={styles.main}>
                     <div className={styles.header}>
                         <h1>Happy Birthday {settings.name}!</h1>
-                        <p>Today's your special day! Since your friends aren't able to meet you in person, they have worked together to present this animation to you as a surprise!</p>
                     </div>
 
                     <hr style={{height: "3px", width: "100%", color: "black", backgroundColor: "black"}}></hr>
@@ -106,22 +146,9 @@ export default function Index() {
                     <div className={styles.startDiv}>
                         <p>This animation is designed to be played on a computer with audio on.</p>
                         <p>The browser will enter fullscreen mode.</p>
-                        <button className={styles.startButton} onClick={startVideo}>Start Animation</button>
+                        <button className={styles.startButton} onClick={startAnimation}>Start Animation</button>
                     </div>
                 </div>
-            : 
-                <>
-                    <div className={styles.main}>
-                        <div className={styles.header}>
-                            <h1>{pastLyrics}<span className={styles.dim}>{futureLyrics}</span></h1>
-                        </div>
-                        <Calendar month={settings.month} day={settings.day}></Calendar>
-                    </div>
-
-                    <div className={styles.bottom}>
-                        <Cake age={settings.age}></Cake>
-                    </div>
-                </>
             }
         </div>
     )
