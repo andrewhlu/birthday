@@ -6,12 +6,18 @@ import Cake from '../components/Cake.js';
 
 export default function Index() {
     const mainDiv = useRef(null);
+    const videoDiv = useRef(null);
     const audioElement = useRef(null)
     const videoElement = useRef(null);
     let [isAnimationStarted, setIsAnimationStarted] = useState(false);
-    let [isSongFinished, setIsSongFinished] = useState(false);
+    let [isSongFinished, setIsSongFinished] = useState(true);
+    let [isVideoFadeStarted, setIsVideoFadeStarted] = useState(false);
+    let [isVideosStarted, setIsVideosStarted] = useState(false);
     let [pastLyrics, setPastLyrics] = useState("");
     let [futureLyrics, setFutureLyrics] = useState("");
+    let [currentVideo, setCurrentVideo] = useState(-1);
+    let [videoAuthor, setVideoAuthor] = useState("");
+    let [videoSrc, setVideoSrc] = useState("#");
 
     const settings = {
         name: "Andrew",
@@ -19,6 +25,18 @@ export default function Index() {
         month: "February",
         day: 6
     }
+
+    const videos = [
+        {
+            url: "yucy.mkv",
+            name: "Yucy Jia",
+            gift: "$25 Amazon Gift Card"
+        },
+        {
+            url: "video.mp4",
+            name: "Tom Nook"
+        }
+    ]
 
     const getAgeWithSuffix = () => {
         let i = settings.age;
@@ -66,7 +84,8 @@ export default function Index() {
         [26610, `🎉 Andrew, it's your ${getAgeWithSuffix()} birthday! 🎉`, ""],
     ];
 
-    const finishedLoadingVideo = (e) => {
+    const onVideoEnd = (e) => {
+        startNextVideo();
         console.log("Finished loading video!");
     }
 
@@ -92,64 +111,102 @@ export default function Index() {
             setIsSongFinished(true);
         }, 26610);
 
-        // videoElement.current.play();
         console.log("Playing Video!");
+    }
+
+    const startVideo = () => {
+        if (isSongFinished) {
+            console.log("Starting Video");
+
+            for (let i = 1; i <= 10; i++) {
+                setTimeout(() => {
+                    audioElement.current.volume = 1 - (i * 0.09);
+                }, 100 * i);
+            }
+
+            setIsVideoFadeStarted(true);
+            setTimeout(() => {
+                setIsVideosStarted(true);
+                startNextVideo();
+            }, 1000);
+        }
+    }
+
+    const startNextVideo = () => {
+        const videoNum = currentVideo + 1;
+        setCurrentVideo(videoNum);
+        console.log(videoNum)
+
+        if (videoNum < videos.length) {
+            setVideoAuthor(videos[videoNum].name);
+            setVideoSrc(videos[videoNum].url);
+
+            videoElement.current.volume = 1;
+            setTimeout(() => {
+                videoElement.current.play();
+            }, 500);
+        } else {
+            console.log("Videos Finished!");
+        }
     }
 
     const onAudioEnd = () => {
         console.log("Audio track finished! This shouldn't happen...");
     }
 
-    const getVideoOpacity = () => {
-        // return welcomeScreen ? 0 : 1;
-        return 0;
-    }
-
     return (
-        <div ref={mainDiv} className={styles.mainDiv}>
-            <Head>
-                <title>Happy Birthday!</title>
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-
+        <>
             <audio ref={audioElement} onEnded={onAudioEnd} src="birthday.m4a"></audio>
-            <video ref={videoElement} className={styles.video} onCanPlayThrough={finishedLoadingVideo} src="video.mp4" style={{opacity: getVideoOpacity()}}></video>
-            
-            {isAnimationStarted ?
-                <>
-                    <div className={styles.main}>
-                        <div className={styles.header}>
-                            <h1>{pastLyrics}<span className={styles.dim}>{futureLyrics}</span></h1>
-                        </div>
-                        <Calendar month={settings.month} day={settings.day}></Calendar>
-                        {isSongFinished &&
-                            <div className={styles.header}>
-                                <p>Today's your special day!</p>
-                                <p>Since your friends aren't able to meet you in person, they have worked together to present this animation to you as a surprise!</p>
-                                <p>Let's see what messages and presents your friends left for you!</p>
+            {!isVideosStarted ?
+                <div ref={mainDiv} className={`${styles.mainDiv} ${isVideoFadeStarted ? styles.fadeoutAnimation : ""}`}>
+                    <Head>
+                        <title>Happy Birthday!</title>
+                        <link rel="icon" href="/favicon.ico" />
+                    </Head>
+                    
+                    {isAnimationStarted ?
+                        <>
+                            <div className={styles.main}>
+                                <div className={styles.header}>
+                                    <h1>{pastLyrics}<span className={styles.dim}>{futureLyrics}</span></h1>
+                                </div>
+                                <Calendar month={settings.month} day={settings.day}></Calendar>
+                                {isSongFinished &&
+                                    <div className={styles.header}>
+                                        <p>Today's your special day!</p>
+                                        <p>Since your friends aren't able to meet you in person, they have worked together to present this animation to you as a surprise!</p>
+                                        <p>Let's see what messages and presents your friends left for you!</p>
+                                        <p>Click the cake to continue.</p>
+                                    </div>
+                                }
                             </div>
-                        }
-                    </div>
 
-                    <div className={styles.bottom}>
-                        <Cake age={settings.age}></Cake>
-                    </div>
-                </>
+                            <div className={styles.bottom} onClick={startVideo}>
+                                <Cake age={settings.age}></Cake>
+                            </div>
+                        </>
+                    :
+                        <div className={styles.main}>
+                            <div className={styles.header}>
+                                <h1>Happy Birthday {settings.name}!</h1>
+                            </div>
+
+                            <hr style={{height: "3px", width: "100%", color: "black", backgroundColor: "black"}}></hr>
+
+                            <div className={styles.startDiv}>
+                                <p>This animation is designed to be played on a computer with audio on.</p>
+                                <p>The browser will enter fullscreen mode.</p>
+                                <button className={styles.startButton} onClick={startAnimation}>Start Animation</button>
+                            </div>
+                        </div>
+                    }
+                </div>
             :
-                <div className={styles.main}>
-                    <div className={styles.header}>
-                        <h1>Happy Birthday {settings.name}!</h1>
-                    </div>
-
-                    <hr style={{height: "3px", width: "100%", color: "black", backgroundColor: "black"}}></hr>
-
-                    <div className={styles.startDiv}>
-                        <p>This animation is designed to be played on a computer with audio on.</p>
-                        <p>The browser will enter fullscreen mode.</p>
-                        <button className={styles.startButton} onClick={startAnimation}>Start Animation</button>
-                    </div>
+                <div ref={videoDiv} className={styles.videoDiv}>
+                    <div className={styles.topBar}>{videoAuthor}</div>
+                    <video ref={videoElement} className={styles.video} onEnded={onVideoEnd} src={videoSrc}></video>
                 </div>
             }
-        </div>
+        </>
     )
 };
