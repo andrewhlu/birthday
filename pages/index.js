@@ -19,6 +19,7 @@ export default function Index() {
     let [currentVideo, setCurrentVideo] = useState(0);
     let [isGiftOpened, setIsGiftOpened] = useState(false);
     let [isVideosFinished, setIsVideosFinished] = useState(false);
+    let [isEndingFadeFinished, setIsEndingFadeFinished] = useState(false);
 
     const settings = {
         name: "Andrew",
@@ -36,7 +37,8 @@ export default function Index() {
             url: "yucy.mkv",
             name: "Yucy Jia",
             gift: "$25 Amazon Gift Card",
-            openTime: 26500
+            openTime: 26500,
+            redeemLink: "https://www.amazon.com/gc/redeem"
         },
         {
             url: "jayleen.mp4",
@@ -146,9 +148,9 @@ export default function Index() {
 
     const startNextVideo = () => {
         const videoNum = currentVideo + 1;
-        setIsGiftOpened(false);
 
         if (videoNum < videos.length) {
+            setIsGiftOpened(false);
             setCurrentVideo(videoNum);
 
             videoElement.current.volume = 1;
@@ -162,6 +164,10 @@ export default function Index() {
                 }, videos[videoNum].openTime + 500);
             }
         } else {
+            setIsVideosFinished(true);
+            setTimeout(() => {
+                setIsEndingFadeFinished(true);
+            }, 1000);
             console.log("Videos Finished!");
         }
     }
@@ -173,59 +179,77 @@ export default function Index() {
     return (
         <>
             <audio ref={audioElement} onEnded={onAudioEnd} src="birthday.m4a"></audio>
-            {!isVideosStarted ?
-                <div ref={mainDiv} className={`${styles.mainDiv} ${isVideoFadeStarted ? styles.fadeoutAnimation : ""}`}>
-                    <Head>
-                        <title>Happy Birthday!</title>
-                        <link rel="icon" href="/favicon.ico" />
-                    </Head>
-                    
-                    {isAnimationStarted ?
-                        <>
-                            <div className={styles.main}>
-                                <div className={styles.header}>
-                                    <h1>{pastLyrics}<span className={styles.dim}>{futureLyrics}</span></h1>
-                                </div>
-                                <Calendar month={settings.month} day={settings.day}></Calendar>
-                                {isSongFinished &&
-                                    <div className={styles.header}>
-                                        <p>Today's your special day!</p>
-                                        <p>Since your friends aren't able to meet you in person, they have worked together to present this animation to you as a surprise!</p>
-                                        <p>Let's see what messages and presents your friends left for you!</p>
-                                        <p>Click the cake to continue.</p>
+            
+            {!isEndingFadeFinished ?
+                <>
+                    {!isVideosStarted ?
+                        <div ref={mainDiv} className={`${styles.mainDiv} ${isVideoFadeStarted ? styles.fadeoutAnimation : ""}`}>
+                            <Head>
+                                <title>Happy Birthday!</title>
+                                <link rel="icon" href="/favicon.ico" />
+                            </Head>
+                            
+                            {isAnimationStarted ?
+                                <>
+                                    <div className={styles.main}>
+                                        <div className={styles.header}>
+                                            <h1>{pastLyrics}<span className={styles.dim}>{futureLyrics}</span></h1>
+                                        </div>
+                                        <Calendar month={settings.month} day={settings.day}></Calendar>
+                                        {isSongFinished &&
+                                            <div className={styles.header}>
+                                                <p>Today's your special day!</p>
+                                                <p>Since your friends aren't able to meet you in person, they have worked together to present this animation to you as a surprise!</p>
+                                                <p>Let's see what messages and presents your friends left for you!</p>
+                                                <p>Click the cake to continue.</p>
+                                            </div>
+                                        }
                                     </div>
-                                }
-                            </div>
-
-                            <div className={styles.bottom} onClick={startVideo}>
-                                <Cake age={settings.age}></Cake>
-                            </div>
-                        </>
+        
+                                    <div className={styles.bottom} onClick={startVideo}>
+                                        <Cake age={settings.age}></Cake>
+                                    </div>
+                                </>
+                            :
+                                <div className={styles.main}>
+                                    <div className={styles.header}>
+                                        <h1>Happy Birthday {settings.name}!</h1>
+                                    </div>
+        
+                                    <hr style={{height: "3px", width: "100%", color: "black", backgroundColor: "black"}}></hr>
+        
+                                    <div className={styles.startDiv}>
+                                        <p>This animation is designed to be played on a computer with audio on.</p>
+                                        <p>The browser will enter fullscreen mode.</p>
+                                        <button className={styles.startButton} onClick={startAnimation}>Start Animation</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     :
-                        <div className={styles.main}>
-                            <div className={styles.header}>
-                                <h1>Happy Birthday {settings.name}!</h1>
-                            </div>
-
-                            <hr style={{height: "3px", width: "100%", color: "black", backgroundColor: "black"}}></hr>
-
-                            <div className={styles.startDiv}>
-                                <p>This animation is designed to be played on a computer with audio on.</p>
-                                <p>The browser will enter fullscreen mode.</p>
-                                <button className={styles.startButton} onClick={startAnimation}>Start Animation</button>
-                            </div>
+                        <div ref={videoDiv} className={`${styles.videoDiv} ${isVideosFinished ? styles.fadeoutAnimation : ""}`}>
+                            <div className={styles.topBar}>{videos[currentVideo].name}</div>
+                            <video ref={videoElement} className={styles.video} onEnded={onVideoEnd} src={videos[currentVideo].url}></video>
+                            {videos[currentVideo].gift !== undefined &&
+                                <div className={styles.bottomDiv}>
+                                    <Gift gift={videos[currentVideo]?.gift} opened={isGiftOpened} name={videos[currentVideo].name}></Gift>
+                                </div>
+                            }
                         </div>
                     }
-                </div>
+                </>
             :
-                <div ref={videoDiv} className={styles.videoDiv}>
-                    <div className={styles.topBar}>{videos[currentVideo].name}</div>
-                    <video ref={videoElement} className={styles.video} onEnded={onVideoEnd} src={videos[currentVideo].url}></video>
-                    {videos[currentVideo].gift !== undefined &&
-                        <div className={styles.bottomDiv}>
-                            <Gift gift={videos[currentVideo]?.gift} opened={isGiftOpened} name={videos[currentVideo].name}></Gift>
-                        </div>
-                    }
+                <div className={styles.mainDiv}>
+                    <div className={styles.main}>
+                        <h1>🎁 Have a wonderful {getAgeWithSuffix()} birthday! 🎁</h1>
+                        <h2>Here are the gifts that you received:</h2>
+                        <p>If applicable, click on a prize to redeem it</p>
+                        {videos.map(video => {
+                            if (video.name !== undefined) {
+                                return <h3><span style={{fontWeight: "bold"}}>{video.name}</span> - <a href={video.redeemLink} target="_blank">{video.gift || "No Gift"}</a></h3>
+                            }
+                        })}
+                    </div>
                 </div>
             }
         </>
