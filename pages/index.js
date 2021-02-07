@@ -186,17 +186,16 @@ export default function Index() {
 
     return (
         <>
+            <Head>
+                <title>Happy Birthday!</title>
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
             <audio ref={audioElement} onEnded={onAudioEnd} src="birthday.m4a"></audio>
             
             {!isEndingFadeFinished ?
                 <>
                     {!isVideosStarted ?
-                        <div ref={mainDiv} className={`${styles.mainDiv} ${isVideoFadeStarted ? styles.fadeoutAnimation : ""}`}>
-                            <Head>
-                                <title>Happy Birthday!</title>
-                                <link rel="icon" href="/favicon.ico" />
-                            </Head>
-                            
+                        <div ref={mainDiv} className={`${styles.mainDiv} ${isVideoFadeStarted ? styles.fadeoutAnimation : ""}`}>                            
                             {isAnimationStarted ?
                                 <>
                                     <div className={styles.main}>
