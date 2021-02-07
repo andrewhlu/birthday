@@ -11,13 +11,14 @@ export default function Index() {
     const audioElement = useRef(null)
     const videoElement = useRef(null);
     let [isAnimationStarted, setIsAnimationStarted] = useState(false);
-    let [isSongFinished, setIsSongFinished] = useState(true);
+    let [isSongFinished, setIsSongFinished] = useState(false);
     let [isVideoFadeStarted, setIsVideoFadeStarted] = useState(false);
     let [isVideosStarted, setIsVideosStarted] = useState(false);
     let [pastLyrics, setPastLyrics] = useState("");
     let [futureLyrics, setFutureLyrics] = useState("");
     let [currentVideo, setCurrentVideo] = useState(0);
     let [isGiftOpened, setIsGiftOpened] = useState(false);
+    let [isVideosFinished, setIsVideosFinished] = useState(false);
 
     const settings = {
         name: "Andrew",
