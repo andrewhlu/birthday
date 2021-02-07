@@ -1,0 +1,12 @@
+.giftDiv {
+    width: 30rem;
+    height: 15rem;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 2rem;
+    font-size: 2rem;
+}
+
+.giftDiv img {
+    margin-top: -13rem;
+}

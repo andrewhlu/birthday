@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import styles from '../styles/Index.module.css';
 import Calendar from '../components/Calendar.js';
 import Cake from '../components/Cake.js';
+import Gift from '../components/Gift.js';
 
 export default function Index() {
     const mainDiv = useRef(null);
@@ -15,9 +16,8 @@ export default function Index() {
     let [isVideosStarted, setIsVideosStarted] = useState(false);
     let [pastLyrics, setPastLyrics] = useState("");
     let [futureLyrics, setFutureLyrics] = useState("");
-    let [currentVideo, setCurrentVideo] = useState(-1);
-    let [videoAuthor, setVideoAuthor] = useState("");
-    let [videoSrc, setVideoSrc] = useState("#");
+    let [currentVideo, setCurrentVideo] = useState(0);
+    let [isGiftOpened, setIsGiftOpened] = useState(false);
 
     const settings = {
         name: "Andrew",
@@ -26,15 +26,26 @@ export default function Index() {
         day: 6
     }
 
+    // The first entry is a placeholder and is necessary for the videos to work
     const videos = [
+        {
+            url: "#",
+        },
         {
             url: "yucy.mkv",
             name: "Yucy Jia",
-            gift: "$25 Amazon Gift Card"
+            gift: "$25 Amazon Gift Card",
+            openTime: 26500
         },
         {
-            url: "video.mp4",
-            name: "Tom Nook"
+            url: "jayleen.mp4",
+            name: "Jayleen Li",
+            gift: "3D Printed Frog",
+            openTime: 21500
+        },
+        {
+            url: "daniel.mp4",
+            name: "Daniel Gultom"
         }
     ]
 
@@ -134,17 +145,21 @@ export default function Index() {
 
     const startNextVideo = () => {
         const videoNum = currentVideo + 1;
-        setCurrentVideo(videoNum);
-        console.log(videoNum)
+        setIsGiftOpened(false);
 
         if (videoNum < videos.length) {
-            setVideoAuthor(videos[videoNum].name);
-            setVideoSrc(videos[videoNum].url);
+            setCurrentVideo(videoNum);
 
             videoElement.current.volume = 1;
             setTimeout(() => {
                 videoElement.current.play();
             }, 500);
+
+            if (videos[videoNum].openTime !== undefined) {
+                setTimeout(() => {
+                    setIsGiftOpened(true);
+                }, videos[videoNum].openTime + 500);
+            }
         } else {
             console.log("Videos Finished!");
         }
@@ -203,8 +218,13 @@ export default function Index() {
                 </div>
             :
                 <div ref={videoDiv} className={styles.videoDiv}>
-                    <div className={styles.topBar}>{videoAuthor}</div>
-                    <video ref={videoElement} className={styles.video} onEnded={onVideoEnd} src={videoSrc}></video>
+                    <div className={styles.topBar}>{videos[currentVideo].name}</div>
+                    <video ref={videoElement} className={styles.video} onEnded={onVideoEnd} src={videos[currentVideo].url}></video>
+                    {videos[currentVideo].gift !== undefined &&
+                        <div className={styles.bottomDiv}>
+                            <Gift gift={videos[currentVideo]?.gift} opened={isGiftOpened} name={videos[currentVideo].name}></Gift>
+                        </div>
+                    }
                 </div>
             }
         </>
