@@ -259,6 +259,9 @@ export default function Index() {
                         })}
                         <hr style={{margin: "4rem", height: "3px", width: "100%", color: "black", backgroundColor: "black"}}></hr>
                         <h1>Thanks for watching! 😄</h1>
+                        <div className={styles.bottom}>
+                            <Cake age={settings.age}></Cake>
+                        </div>
                     </div>
                 </div>
             }
