@@ -1,10 +1,11 @@
 import Head from 'next/head';
 import { useRef, useState } from 'react';
 import styles from '../styles/Index.module.css';
+import Calendar from '../components/Calendar.js';
+import Cake from '../components/Cake.js';
 
 export default function Index() {
     const mainDiv = useRef(null);
-    const candleImageDiv = useRef(null);
     const audioElement = useRef(null)
     const videoElement = useRef(null);
     let [welcomeScreen, setWelcomeScreen] = useState(true);
@@ -13,34 +14,38 @@ export default function Index() {
 
     const settings = {
         name: "Andrew",
-        age: 22
+        age: 22,
+        month: "February",
+        day: 6
     }
 
     const liveLyrics = [
-        [5401, "Hap", "py Birthday to You!"],
-        [5556, "Happy ", "Birthday to You!"],
-        [5729, "Happy Birth", "day to You!"],
-        [6048, "Happy Birthday", " to You!"],
-        [7669, "Happy Birthday to", " You!"],
-        [8341, "Happy Birthday to You!", ""],
-        [10605, "Hap", "py Birthday to You!"],
-        [10760, "Happy ", "Birthday to You!"],
-        [10933, "Happy Birth", "day to You!"],
-        [11252, "Happy Birthday", " to You!"],
-        [12873, "Happy Birthday to", " You!"],
-        [13545, "Happy Birthday to You!", ""],
-        [15535, "Hap", `py Birthday to ${settings.name}!`],
-        [15842, "Happy ", `Birthday to ${settings.name}!`],
-        [16195, "Happy Birth", `day to ${settings.name}!`],
-        [17505, "Happy Birthday", ` to ${settings.name}!`],
-        [18147, "Happy Birthday to", ` ${settings.name}!`],
-        [18807, `Happy Birthday to ${settings.name}!`, ""],
-        [20768, "Hap", "py Birthday to You!"],
-        [21066, "Happy ", "Birthday to You!"],
-        [21411, "Happy Birth", "day to You!"],
-        [22318, "Happy Birthday", " to You!"],
-        [23351, "Happy Birthday to", " You!"],
-        [24023, "Happy Birthday to You!", ""],
+        [0, "It's a special day!", " (Your Birthday!)"],
+        [3129, "Sing along with us!", ""],
+        [5401, "🎵 Hap", "py Birthday to You! 🎵"],
+        [5556, "🎵 Happy ", "Birthday to You! 🎵"],
+        [5729, "🎵 Happy Birth", "day to You! 🎵"],
+        [6048, "🎵 Happy Birthday", " to You! 🎵"],
+        [7669, "🎵 Happy Birthday to", " You! 🎵"],
+        [8341, "🎵 Happy Birthday to You!", " 🎵"],
+        [10605, "🎵 Hap", "py Birthday to You! 🎵"],
+        [10760, "🎵 Happy ", "Birthday to You! 🎵"],
+        [10933, "🎵 Happy Birth", "day to You! 🎵"],
+        [11252, "🎵 Happy Birthday", " to You! 🎵"],
+        [12873, "🎵 Happy Birthday to", " You! 🎵"],
+        [13545, "🎵 Happy Birthday to You!", " 🎵"],
+        [15535, "🎵 Hap", `py Birthday to ${settings.name}! 🎵`],
+        [15842, "🎵 Happy ", `Birthday to ${settings.name}! 🎵`],
+        [16195, "🎵 Happy Birth", `day to ${settings.name}! 🎵`],
+        [17505, "🎵 Happy Birthday", ` to ${settings.name}! 🎵`],
+        [18147, "🎵 Happy Birthday to", ` ${settings.name}! 🎵`],
+        [18807, `🎵 Happy Birthday to ${settings.name}!`, " 🎵"],
+        [20768, "🎵 Hap", "py Birthday to You! 🎵"],
+        [21066, "🎵 Happy ", "Birthday to You! 🎵"],
+        [21411, "🎵 Happy Birth", "day to You! 🎵"],
+        [22318, "🎵 Happy Birthday", " to You! 🎵"],
+        [23351, "🎵 Happy Birthday to", " You! 🎵"],
+        [24023, "🎵 Happy Birthday to You!", " 🎵"],
     ];
 
     const finishedLoadingVideo = (e) => {
@@ -71,9 +76,7 @@ export default function Index() {
     }
 
     const onAudioEnd = () => {
-        // audioElement.current.currentTime = 5.058;
-        // audioElement.current.play();
-        console.log("Looping");
+        console.log("Audio track finished! This shouldn't happen...");
     }
 
     const getVideoOpacity = () => {
@@ -88,8 +91,8 @@ export default function Index() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <audio ref={audioElement} onCanPlayThrough={finishedLoadingVideo} onEnded={onAudioEnd} src="birthday.m4a"></audio>
-            <video ref={videoElement} className={styles.video} onCanPlayThrough={finishedLoadingVideo} src="https://andrewhlu.com/kailin-bday/video.mp4" style={{opacity: getVideoOpacity()}}></video>
+            <audio ref={audioElement} onEnded={onAudioEnd} src="birthday.m4a"></audio>
+            <video ref={videoElement} className={styles.video} onCanPlayThrough={finishedLoadingVideo} src="video.mp4" style={{opacity: getVideoOpacity()}}></video>
             
             {welcomeScreen ?
                 <div className={styles.main}>
@@ -107,20 +110,18 @@ export default function Index() {
                     </div>
                 </div>
             : 
-                <div className={styles.main}>
-                    <div className={styles.header}>
-                        <h1>{pastLyrics}<span className={styles.dim}>{futureLyrics}</span></h1>
+                <>
+                    <div className={styles.main}>
+                        <div className={styles.header}>
+                            <h1>{pastLyrics}<span className={styles.dim}>{futureLyrics}</span></h1>
+                        </div>
+                        <Calendar month={settings.month} day={settings.day}></Calendar>
                     </div>
-                    <div ref={candleImageDiv} className={styles.row}>
-                        <img src={`/numbers/${settings.age.toString()[0]}.png`} alt={settings.age.toString()[0]}></img>
-                        {settings.age.toString().length > 1 &&
-                            <img src={`/numbers/${settings.age.toString()[1]}.png`} alt={settings.age.toString()[1]}></img>
-                        }
-                        {settings.age.toString().length > 2 &&
-                            <img src={`/numbers/${settings.age.toString()[2]}.png`} alt={settings.age.toString()[2]}></img>
-                        }
+
+                    <div className={styles.bottom}>
+                        <Cake age={settings.age}></Cake>
                     </div>
-                </div>
+                </>
             }
         </div>
     )

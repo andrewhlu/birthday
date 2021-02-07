@@ -1,0 +1,20 @@
+.calendarIcon {
+    width: 15rem;
+    text-align: center;
+}
+
+.top {
+    height: 3rem;
+    border-radius: 50px 50px 0 0 solid #d9534f;
+    background-color: #d9534f;
+    padding: 0.25rem;
+    font-size: 2rem;
+}
+
+.bottom {
+    height: 12rem;
+    border-radius: 0 0 50px 50px solid white;
+    background-color: white;
+    padding: 1rem;
+    font-size: 8rem;
+}
