@@ -4,6 +4,7 @@ import styles from '../styles/Index.module.css';
 
 export default function Index() {
     const mainDiv = useRef(null);
+    const candleImageDiv = useRef(null);
     const audioElement = useRef(null)
     const videoElement = useRef(null);
     let [welcomeScreen, setWelcomeScreen] = useState(true);
@@ -11,7 +12,8 @@ export default function Index() {
     let [futureLyrics, setFutureLyrics] = useState("");
 
     const settings = {
-        name: "Andrew"
+        name: "Andrew",
+        age: 22
     }
 
     const liveLyrics = [
@@ -62,7 +64,7 @@ export default function Index() {
                 setPastLyrics(lyric[1]);
                 setFutureLyrics(lyric[2]);
             }, lyric[0]);
-        })
+        });
 
         // videoElement.current.play();
         console.log("Playing Video!");
@@ -108,6 +110,15 @@ export default function Index() {
                 <div className={styles.main}>
                     <div className={styles.header}>
                         <h1>{pastLyrics}<span className={styles.dim}>{futureLyrics}</span></h1>
+                    </div>
+                    <div ref={candleImageDiv} className={styles.row}>
+                        <img src={`/numbers/${settings.age.toString()[0]}.png`} alt={settings.age.toString()[0]}></img>
+                        {settings.age.toString().length > 1 &&
+                            <img src={`/numbers/${settings.age.toString()[1]}.png`} alt={settings.age.toString()[1]}></img>
+                        }
+                        {settings.age.toString().length > 2 &&
+                            <img src={`/numbers/${settings.age.toString()[2]}.png`} alt={settings.age.toString()[2]}></img>
+                        }
                     </div>
                 </div>
             }
