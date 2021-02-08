@@ -95,7 +95,7 @@ export default function Index() {
         [22318, "🎵 Happy Birthday", " to You! 🎵"],
         [23351, "🎵 Happy Birthday to", " You! 🎵"],
         [24023, "🎵 Happy Birthday to You!", " 🎵"],
-        [26610, `🎉 Andrew, it's your ${getAgeWithSuffix()} birthday! 🎉`, ""],
+        [26610, `🎉 ${settings.name}, it's your ${getAgeWithSuffix()} birthday! 🎉`, ""],
     ];
 
     const onVideoEnd = (e) => {
